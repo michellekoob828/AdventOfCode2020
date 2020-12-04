@@ -3,16 +3,16 @@ package src.main;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import src.processor.Day2Processor;
+import src.processor.Day3Processor;
 
-public class Day2Main {
+public class Day3Main {
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("Day 3 Program Started");
-		Day2Processor day2 = new Day2Processor();
+		Day3Processor day3 = new Day3Processor();
 		try {
-			day2.process();
-			day2.processPart2();
+			day3.process();
+			day3.processPart2();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
