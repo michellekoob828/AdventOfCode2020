@@ -18,7 +18,7 @@ public class Day1Processor {
 			String line = bufr.readLine();
 			
 			while(line != null){
-				//do stuff
+				//do stuff 
 				line = bufr.readLine(); 
 			}
 			
