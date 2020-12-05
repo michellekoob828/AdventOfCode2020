@@ -8,10 +8,13 @@ import java.util.List;
 
 import src.vo.Constants;
 import src.vo.PassportData;
+import src.vo.PassportEyeColor;
 
 public class Day4Processor {
 	
 	public static final String FILE_NAME = "src/resources/InputDay4";
+	public static final String HAIR_COLOR_REGEX = "#{1}[0123456789abcdef]{6}";
+	public static final String PASSPORT_ID_REGEX = "[\\d]{9}";
 
 	public void processPart1() throws IOException {
 		System.out.println("Part 1 Started");
@@ -19,7 +22,7 @@ public class Day4Processor {
 		int validPassportCount = 0;
 		
 		for(PassportData passport : passportDataList) {
-			if(this.isPassportValid(passport)) {
+			if(this.isPassportValidPart1(passport)) {
 				validPassportCount++;
 			}
 		}
@@ -28,7 +31,90 @@ public class Day4Processor {
 		System.out.println("Part 1 Ended");
 	}
 	
-	private boolean isPassportValid(PassportData passport) {
+	public void processPart2() throws IOException {
+		System.out.println("Part 2 Started");
+		List<PassportData> passportDataList = this.parsePassportData();
+		int validPassportCount = 0;
+		
+		for(PassportData passport : passportDataList) {
+			if(this.isPassportValidPart2(passport)) {
+				validPassportCount++;
+			}
+		}
+		
+		System.out.println("Valid passport count: " + validPassportCount);
+		System.out.println("Part 2 Ended");
+	}
+	
+	private boolean isPassportValidPart2(PassportData passport) {
+		if(!this.isPassportValidPart1(passport)) {
+			return false;
+		}
+		
+		return (this.isYearValid(passport.getBirthYear(), 1920, 2002) &&
+				this.isYearValid(passport.getIssueYear(), 2010, 2020) &&
+				this.isYearValid(passport.getExpirationYear(), 2020, 2030) &&
+				this.isHeightValid(passport.getHeight()) &&
+				this.isHairColorValid(passport.getHairColor()) &&
+				this.isEyeColorValid(passport.getEyeColor()) &&
+				this.isPassportIdValid(passport.getPassportId()));
+	}
+	
+	private boolean isYearValid(String passportYearString, int earliestYear, int latestYear) {
+		int passportYear;
+		try {
+			passportYear = Integer.parseInt(passportYearString);
+		} catch(NumberFormatException e) {
+			return false;
+		}
+		
+		return ((passportYear >= earliestYear) && (passportYear <= latestYear));
+	}
+	
+	private boolean isHeightValid(String heightWithUnits) {
+		int height;
+		
+		if(heightWithUnits.contains("cm")) {
+			try {
+				height = this.parseHeightValue(heightWithUnits, "cm");
+				return this.isHeightValid(height, 150, 193);
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		} else if(heightWithUnits.contains("in")) {
+			try {
+				height = this.parseHeightValue(heightWithUnits, "in");
+				return this.isHeightValid(height, 59, 76);
+			} catch (NumberFormatException e) {
+				return false;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean isHairColorValid(String hairColor) {
+		return (hairColor.matches(HAIR_COLOR_REGEX));
+	}
+	
+	private boolean isEyeColorValid(String eyeColor) {
+		return (PassportEyeColor.getValidEyeColors().contains(eyeColor));
+	}
+	
+	private boolean isPassportIdValid(String passportId) {
+		return (passportId.matches(PASSPORT_ID_REGEX));
+	}
+	
+	private boolean isHeightValid(int passportHeight, int minHeight, int maxHeight) {
+		return ((passportHeight >= minHeight) && (passportHeight <= maxHeight));
+	}
+	
+	private int parseHeightValue(String heightWithUnits, String unit) {
+		String heightString = heightWithUnits.substring(0, heightWithUnits.indexOf(unit));
+		return Integer.parseInt(heightString);
+	}
+	
+	private boolean isPassportValidPart1(PassportData passport) {
 		return (!passport.getBirthYear().isEmpty() &&
 				!passport.getExpirationYear().isEmpty() &&
 				!passport.getEyeColor().isEmpty() &&

@@ -12,6 +12,7 @@ public class Day4Main {
 		Day4Processor day4 = new Day4Processor();
 		try {
 			day4.processPart1();
+			day4.processPart2();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
