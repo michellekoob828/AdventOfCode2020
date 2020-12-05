@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import src.vo.BoardingPass;
 
 public class Day5Processor {
 	
@@ -33,6 +36,36 @@ public class Day5Processor {
 		
 		System.out.println("highest seat id: " + maxSeatId);
 		System.out.println("Part 1 Ended");
+	}
+	
+	public void processPart2() throws Exception {
+		System.out.println("Part 2 Started");
+		List<String> input = this.parseInput();
+		List<BoardingPass> takenSeats = new ArrayList<>();
+		
+		for(String inputRow : input) {
+			int row = this.determinePosition(inputRow.substring(0, 7), 127);
+			int column = this.determinePosition(inputRow.substring(7, 10), 7);
+			takenSeats.add(new BoardingPass(row, column));
+		}
+		
+		takenSeats.sort(Comparator.comparingInt(BoardingPass::getRowNum)
+				.thenComparingInt(BoardingPass::getColNum));
+		this.findEmptySeats(takenSeats);
+		
+		System.out.println("Part 2 Ended");
+	}
+	
+	private void findEmptySeats(List<BoardingPass> takenSeats) {
+		for(int r = 0; r < 128; r++) {
+			for(int c = 0; c < 8; c++) {
+				BoardingPass currentSeat = new BoardingPass(r,c);
+				if(!takenSeats.contains(currentSeat)) {
+					System.out.println("Empty seat: row " + currentSeat.getRowNum() + ", col " 
+							+ currentSeat.getColNum() + ", seat ID " + currentSeat.getSeatNum());
+				}
+			}
+		}
 	}
 	
 	private int determinePosition(String rowInput, int maxValue) throws Exception {

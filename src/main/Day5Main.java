@@ -11,6 +11,7 @@ public class Day5Main {
 		Day5Processor day5 = new Day5Processor();
 		try {
 			day5.processPart1();
+			day5.processPart2();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
