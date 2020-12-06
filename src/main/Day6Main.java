@@ -10,7 +10,7 @@ public class Day6Main {
 		System.out.println("Day 6 Program Started");
 		Day6Processor day6 = new Day6Processor();
 		try {
-			day6.processPart1();
+			day6.process();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
