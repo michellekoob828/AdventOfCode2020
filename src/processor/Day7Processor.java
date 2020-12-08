@@ -11,18 +11,19 @@ import src.vo.Constants;
 public class Day7Processor {
 	
 	public static final String FILE_NAME = "src/resources/InputDay7";
+	public static final String BAG_COLOR = "shiny gold";
 	
 	public void process() throws Exception {
 		Map<String,Map<String,Integer>> luggageRules = this.parseInput();
 		this.processPart1(luggageRules);
-		//this.processPart2(groups);
 	}
 
 	private void processPart1(Map<String,Map<String,Integer>> luggageRules) throws Exception {
 		System.out.println("Part 1 Started");
 		int bagColorCount = 0;
-		for(Map.Entry<String, Map<String,Integer>> bag : luggageRules.entrySet()) {
-			if(this.canContainBagColor(luggageRules, bag.getKey(), "shiny gold")) {
+		
+		for(Map.Entry<String,Map<String,Integer>> rule : luggageRules.entrySet()) {
+			if(this.doesRuleContainBagColor(luggageRules, rule, BAG_COLOR)) {
 				bagColorCount++;
 			}
 		}
@@ -31,12 +32,46 @@ public class Day7Processor {
 		System.out.println("Part 1 Ended");
 	}
 	
-	private boolean canContainBagColor(Map<String,Map<String,Integer>> luggageRules, String currentColorRule, String bagColor) {
-		//TODO: Add logic
-		
-		
+	private boolean doesRuleContainBagColor(Map<String,Map<String,Integer>> luggageRules, Map.Entry<String,Map<String,Integer>> rule, String bagColor) {
+		Map<String,Integer> bagsUnderRule = this.findAllContainingBags(luggageRules, rule);
+		if(bagsUnderRule.containsKey(bagColor)) {
+			return true;
+		}
 		
 		return false;
+	}
+	
+	private Map<String,Integer> findAllContainingBags(Map<String,Map<String,Integer>> luggageRules, Map.Entry<String,Map<String,Integer>> rule) {
+		Map<String,Integer> unprocessedBags = new HashMap<>();
+		Map<String,Integer> processedBags = new HashMap<>();
+		
+		//process initial rule
+		for(Map.Entry<String,Integer> bag : rule.getValue().entrySet()) {
+			if(bag.getValue() > 0) {
+				unprocessedBags.put(bag.getKey(), bag.getValue());
+			}
+		}
+		
+		while(!unprocessedBags.isEmpty()) {
+			Map<String,Integer> tempUnprocessedBags = new HashMap<>();
+			tempUnprocessedBags.putAll(unprocessedBags);
+			
+			//loop through each unprocessed bag
+			for(Map.Entry<String,Integer> ub : tempUnprocessedBags.entrySet()) {
+				//find the rule associated with the unprocessed bag
+				Map<String,Integer> newRule = luggageRules.get(ub.getKey());
+				//loop through each bag in the new rule
+				for(Map.Entry<String,Integer> newBag : newRule.entrySet()) {
+					if(newBag.getValue() > 0 && !processedBags.containsKey(newBag.getKey())) {
+						unprocessedBags.put(newBag.getKey(), newBag.getValue());
+					}
+				}
+				unprocessedBags.remove(ub.getKey());
+				processedBags.put(ub.getKey(), ub.getValue());
+			}
+		}
+		
+		return processedBags;
 	}
 	
 	private Map<String,Map<String,Integer>> parseInput() throws IOException {
